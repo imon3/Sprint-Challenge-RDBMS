@@ -25,6 +25,7 @@ router.post('/projects', (req, res) => {
         })
 })
 
+// CREATE ACTIONS REQUEST
 router.post('/actions', (req, res) => {
     db('actions')
         .insert(req.body)
@@ -45,6 +46,31 @@ router.post('/actions', (req, res) => {
         })
 })
 
+// GET REQUEST TO RETRIEVE THE PROJECTS AND THE CORRESPONDING ACTIONS
+router.get('/projects/:id/actions', (req, res) => {
+    const id = req.params.id;
 
+    db('projects')
+        .where({ id: id })
+        .then(project => {
+            db('actions')
+                .where({ project_id: id })
+                .then(action => {
+                    if (project.length > 0) {
+                        res.status(200).json({ project, action })
+                    } else {
+                        res.status(404).json({
+                            message: 'The projects can not be found.'
+                        })
+                    }
+                })
+                .catch(err => {
+                    res.status(500).json(err)
+                })
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        })
+})
 
 module.exports = router;
