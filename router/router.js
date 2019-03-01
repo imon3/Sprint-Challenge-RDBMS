@@ -25,6 +25,26 @@ router.post('/projects', (req, res) => {
         })
 })
 
+router.post('/actions', (req, res) => {
+    db('actions')
+        .insert(req.body)
+        .then(actionId => {
+            const [id] = actionId;
+
+            db('actions')
+                .where({ id })
+                .then(action => {
+                    res.status(200).json(action)
+                })
+                .catch(err => {
+                    res.status(500).json(err)
+                })
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        })
+})
+
 
 
 module.exports = router;
